@@ -1,0 +1,148 @@
+***Database Commands***
+1) View all Database
+->show dbs
+2) Create a new or switch Database
+->use <Database_name>
+3) View current Database
+->db
+4) Delete Database
+-> db.dropDatabse()
+
+*** Collections Commanda(Tables)***
+1) Show Collections
+-> show collections
+2) Create a collection names 'comments'
+-> db.createCollection('comments')
+3) Drop a collection names 'comments'
+-> db.comments.drop()
+
+
+*** Row(Document) Commands***
+1) Show all Rows in a collection
+-> db.comments.find()
+2) Show all Rows in a collection(prettified)
+-> db.comments.find().pretty()
+3) Find the first row matching the object
+-> db.comments.findOne({name:'Tanuj'})
+4) Insert One Row
+-> db.comments.insert({
+    'name':'Tanuj',
+    'lang':'Python',
+    'member_since':5
+})
+-> db.comments.insertOne(
+   {
+     _id: 1,
+     sku: "abc123",
+     quantity: 10,
+     metrics: { orders: 2, ratings: 3.5 }
+   }
+)
+5) Insert many Rows
+->db.comments.insertMany([{
+        'name':'Harry',
+        'lang': 'javascript',
+        'member_since':5
+    },
+    {   'name':'Rohan',
+        'lang':'Pyhton',
+        'member_since':3
+    },
+    {
+        'name':'Lovish',
+        'lang':'java',
+        'member_since':4
+    }])
+6) Search in a MongoDb Database
+-> db.comments.find({lang:'python'})
+7) Limit the number of rows in output
+-> db.comments.find().limit(2)
+8) Count the number of rows in the output
+-> db.comments.find().count()
+9) Update a row
+-> db.comments.update({'name':'Shubham'},
+{
+    'name':'Harry',
+    'lang':'javascript'
+    'member_since':52
+},{ upsert:true} )
+10) MongoDb Increment Operator
+-> db.comments.update({name:'Rohan'},
+   {$inc:{member_since:2
+   }})
+11) MongoDb Rename Operator
+-> db.comments.update({name:'Rohan'},
+   {$rename:{member_since:'member'
+   }})
+12) Delete Row
+-> db.comments.remove({name:'Harry'})
+13) Less than/Greater than/Less than or eq/Greater than or eq
+-> db.comments.find({member_since:{$lt: 90}})
+-> db.comments.find({member_since:{$lte: 90}})
+-> db.comments.find({member_since:{$gt: 90}})
+-> db.comments.find({member_since:{$gte :90}})
+
+*** UPDATE OPERATORS***
+1) To get the current timestamp and give to variable
+-> db.customers.updateOne(
+   { _id: 1 },
+   {
+     $currentDate: {
+        lastModified: true,
+        "cancellation.date": { $type: "timestamp" }
+     },
+     $set: {
+        "cancellation.reason": "user request",
+        status: "D"
+     }
+   }
+)
+-> db.customers.updateOne(
+  { _id: 1 },
+  [
+   { $set: { lastModified: "$$NOW", cancellation: {date: "$$CLUSTER_TIME", reason: "user request"}, status: "D" } }
+  ]
+)
+2) MIN(current value<previous value(true))/MAX OPERATOR(current>previous(true))
+-> db.scores.insertOne( { _id: 1, highScore: 800, lowScore: 200 } )
+-> db.scores.updateOne( { _id: 1 }, { $min: { lowScore: 150 } } )
+
+3) Use $max to Compare Dates  /// Tags is a collection(table)
+-> db.tags.insertOne(
+   {
+     _id: 1,
+     desc: "crafts",
+     dateEntered: ISODate("2013-10-01T05:00:00Z"),
+     dateExpired: ISODate("2013-10-01T16:38:16.163Z")
+   }
+)
+The following operation compares the current value of the dateExpired field,
+ISODate("2013-10-01T16:38:16.163Z"), with the specified date
+ new Date("2013-09-30") to determine whether to update the field:
+-> db.tags.updateOne(
+   { _id: 1 },
+   { $max: { dateExpired: new Date("2013-09-30") } }
+)
+// Print tags collection output look like
+-> {
+   _id: 1,
+   desc: "decorative arts",
+   dateEntered: ISODate("2013-10-01T05:00:00Z"),
+   dateExpired: ISODate("2013-10-01T16:38:16.163Z")
+}
+4) $mul (to multiply any quantity with something)
+-> db.comments.updateOne(
+   { _id: 1 },
+   { $mul:
+      {
+         price: Decimal128( "1.25" ),
+         quantity: 2
+       }
+   }
+)
+5) The $unset operator deletes a particular field
+-> db.products.updateOne(
+   { sku: "unknown" },
+   { $unset: { quantity: "", instock: "" } }
+)
+6) 
